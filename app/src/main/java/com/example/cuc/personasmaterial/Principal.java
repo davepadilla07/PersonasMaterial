@@ -46,6 +46,7 @@ public class Principal extends AppCompatActivity implements AdaptadorPersona.OnP
     }
 
     public void agregar(View v){
+        finish();
         Intent i = new Intent(Principal.this,AgregarPersona.class);
         startActivity(i);
     }

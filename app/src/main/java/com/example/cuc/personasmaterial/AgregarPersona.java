@@ -1,5 +1,7 @@
 package com.example.cuc.personasmaterial;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -7,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethod;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class AgregarPersona extends AppCompatActivity {
@@ -62,7 +66,7 @@ public class AgregarPersona extends AppCompatActivity {
     }
 
     public void guardar(View v){
-        String foto,cedula,nombre,apellido,sexo,pasatiempo="";
+        String foto,cedula,nombre,apellido;
         Persona p;
         if (validarTodo()){
             cedula=cajaCedula.getText().toString();
@@ -72,9 +76,12 @@ public class AgregarPersona extends AppCompatActivity {
 
 
             //Le quita el espacio y la "," al final
-            pasatiempo=pasatiempo.substring(0,pasatiempo.length()-2);
+
             p = new Persona(foto,cedula,nombre,apellido);
             p.guardar(getApplicationContext());
+
+            InputMethodManager imp = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imp.hideSoftInputFromWindow(cajaCedula.getWindowToken(),0);
 
             Snackbar.make(v,getResources().getString(R.string.mensaje2),Snackbar.LENGTH_SHORT).show();
             limpiar();
@@ -86,5 +93,11 @@ public class AgregarPersona extends AppCompatActivity {
         cajaNombre.setText("");
         cajaApellido.setText("");
         cajaCedula.requestFocus();
+    }
+
+    public void onBackPressed(){
+        finish();
+        Intent i = new Intent(AgregarPersona.this,Principal.class);
+        startActivity(i);
     }
 }
