@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PersonasMaterial</string>
+    <string name="apellido">Lastname</string>
+    <string name="borrar">CLEAR</string>
+    <string name="cedula">Identification</string>
+    <string name="error1">Enter Identification</string>
+    <string name="error2">Enter Name</string>
+    <string name="error3">Enter Lastname</string>
+    <string name="guardar">SAVE</string>
+    <string name="mensaje2">Person saved successfully!</string>
+    <string name="nombre">Name</string>
+    <string name="registrar">REGISTRATION</string>
+    <string name="action_settings">Setting</string>
+</resources>
