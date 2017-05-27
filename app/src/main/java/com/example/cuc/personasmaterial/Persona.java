@@ -47,7 +47,7 @@ public class Persona {
         this.idfoto=idfoto;
     }
 
-    public Persona(String uuid, String urlfoto, String idfoto, String cedula, String nombre, String apellido) {
+    public Persona(String uuid, String urlfoto, String cedula, String nombre, String apellido, String idfoto) {
         this.uuid = uuid;
         this.urlfoto = urlfoto;
         this.idfoto = idfoto;
