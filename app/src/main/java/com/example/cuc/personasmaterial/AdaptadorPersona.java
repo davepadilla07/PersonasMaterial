@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 /**
@@ -34,7 +36,8 @@ public class AdaptadorPersona extends RecyclerView.Adapter<AdaptadorPersona.Pers
     public void onBindViewHolder(AdaptadorPersona.PersonaViewHolder holder, int position) {
         //Pasan los datos
         final Persona p = personas.get(position);
-        holder.foto.setImageResource(Integer.parseInt(p.getFoto()));
+        //holder.foto.setImageResource(Integer.parseInt(p.getUrlfoto()));
+        Picasso.with(holder.view.getContext()).load(p.getUrlfoto()).into(holder.foto);
         holder.cedula.setText(p.getCedula());
         holder.nombre.setText(p.getNombre());
         holder.apellido.setText(p.getApellido());

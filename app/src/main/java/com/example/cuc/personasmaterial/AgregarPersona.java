@@ -2,6 +2,8 @@ package com.example.cuc.personasmaterial;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -10,10 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import java.io.ByteArrayOutputStream;
 
 public class AgregarPersona extends AppCompatActivity {
     private EditText cajaCedula;
@@ -91,18 +96,24 @@ public class AgregarPersona extends AppCompatActivity {
     }
 
     public void guardar(View v){
-        String foto,cedula,nombre,apellido;
+        String urlfoto,cedula,nombre,apellido,idfoto;
         Persona p;
         if (validarTodo()){
             cedula=cajaCedula.getText().toString();
-            foto= String.valueOf(fotoaleatoria());
+
             nombre=cajaNombre.getText().toString();
             apellido=cajaApellido.getText().toString();
+            idfoto=String.valueOf(fotoaleatoria());
 
+            Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),Integer.parseInt(idfoto));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+            byte[] imagenByte= baos.toByteArray();
+            urlfoto = Base64.encodeToString(imagenByte,Base64.DEFAULT);
 
             //Le quita el espacio y la "," al final
 
-            p = new Persona(foto,cedula,nombre,apellido);
+            p = new Persona(urlfoto,cedula,nombre,apellido,idfoto);
             p.guardar(getApplicationContext());
 
             InputMethodManager imp = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

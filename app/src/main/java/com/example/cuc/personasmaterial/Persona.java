@@ -29,12 +29,12 @@ import java.util.UUID;
 public class Persona {
     private String uuid;
     private String urlfoto;
+    private String idfoto;
     private String cedula;
     private String nombre;
     private String apellido;
-    private String idfoto;
 
-    public Persona (){
+    public Persona(){
 
     }
 
@@ -44,33 +44,18 @@ public class Persona {
         this.cedula = cedula;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.idfoto = idfoto;
+        this.idfoto=idfoto;
     }
 
-    public Persona(String uuid, String urlfoto, String cedula, String nombre, String apellido, String idfoto) {
+    public Persona(String uuid, String urlfoto, String idfoto, String cedula, String nombre, String apellido) {
         this.uuid = uuid;
         this.urlfoto = urlfoto;
+        this.idfoto = idfoto;
         this.cedula = cedula;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.idfoto = idfoto;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getUrlfoto() {
-        return urlfoto;
-    }
-
-    public void setUrlfoto(String urlfoto) {
-        this.urlfoto = urlfoto;
-    }
 
     public String getCedula() {
         return cedula;
@@ -96,6 +81,22 @@ public class Persona {
         this.apellido = apellido;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUrlfoto() {
+        return urlfoto;
+    }
+
+    public void setUrlfoto(String urlfoto) {
+        this.urlfoto = urlfoto;
+    }
+
     public String getIdfoto() {
         return idfoto;
     }
@@ -104,6 +105,9 @@ public class Persona {
         this.idfoto = idfoto;
     }
 
+    public  void guardar(Context contexto){
+        guardarRemoto(contexto);
+    }
     public void guardarRemoto(final Context contexto){
         new AsyncTask<Void, Void, String>(){
 
@@ -113,16 +117,17 @@ public class Persona {
 
                 try {
                     URL url = new URL("http://34.224.18.235/guardar.php");
-                    conexion = (HttpURLConnection)url.openConnection();
+                    conexion =(HttpURLConnection)url.openConnection();
                     conexion.setConnectTimeout(30000);
                     conexion.setReadTimeout(30000);
 
-                    //envio de datos
+                    //Configuracion de envío de datos via POST
                     conexion.setRequestMethod("POST");
                     conexion.setDoOutput(true);
-                    conexion.setRequestProperty("Countent-Type","application/x-www-form-urlencoded");
+                    conexion.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 
                     //Crear consulta con los datos
+
                     StringBuilder builder = new StringBuilder();
                     builder.append("id");
                     builder.append("=");
@@ -156,65 +161,69 @@ public class Persona {
                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream,"UTF-8");
                     BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
                     bufferedWriter.write(query);
-                    //manda conexion
                     bufferedWriter.flush();
                     bufferedWriter.close();
 
-                    //conectar
+                    //Conectar
                     conexion.connect();
 
-                    //leer respuesta del server
+                    //Leer Respuesta del servidor
+
                     InputStream inputStream = conexion.getInputStream();
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream,"UTF-8");
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                     StringBuilder datos = new StringBuilder();
                     String linea;
-                    while ((linea = bufferedReader.readLine())!=null){
+                    while((linea =bufferedReader.readLine())!=null){
                         datos.append(linea);
                     }
+
                     bufferedReader.close();
                     return datos.toString();
-
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
                 return null;
+
             }
 
             @Override
             protected void onPostExecute(String s){
                 super.onPostExecute(s);
-                try{
+                try {
                     JSONObject jsonObject = new JSONObject(s);
                     boolean success = jsonObject.getBoolean("success");
-                    if (success){
-                        urlfoto=jsonObject.getString("urlfoto");
+                    if(success){
+                        urlfoto = jsonObject.getString("foto");
                         guardarLocal(contexto);
+
                     }
-                }catch(JSONException e){
+
+
+
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
         }.execute();
     }
 
 
     public void guardarLocal(Context contexto){
-        //Declarar variables
+        //declarar las variables
         SQLiteDatabase db;
         String sql;
 
-        //Abrir conexion base de datos en escritura
-        PersonasSQLiteOpenHelper aux = new PersonasSQLiteOpenHelper(contexto,"DBPersonas",null);
-        db=aux.getWritableDatabase();
+        //Abrir la conexion de base datos en modo escritura
+        PersonasSQLiteOpenHelper  aux = new PersonasSQLiteOpenHelper(contexto,"DBPersonas",null);
+        db = aux.getWritableDatabase();
 
-        //Insertar forma 1
-        sql="INSERT INTO Personas values('"
+        //insertar forma 1
+        sql = "INSERT INTO Personas values('"
                 +this.getUuid()+"','"
                 +this.getUrlfoto()+"','"
                 +this.getCedula()+"','"
@@ -224,52 +233,56 @@ public class Persona {
 
         db.execSQL(sql);
 
-        //Insertar forma 2
-        /*ContentValues nuevoRegistro = new ContentValues();
+        //insert forma 2
+
+      /*  ContentValues nuevoRegistro = new ContentValues();
         nuevoRegistro.put("foto",this.getFoto());
         nuevoRegistro.put("cedula",this.getCedula());
         nuevoRegistro.put("nombre",this.getNombre());
         nuevoRegistro.put("apellido",this.getApellido());
-
-
-        db.insert("Personas",null,nuevoRegistro);*/
-
+        nuevoRegistro.put("sexo",this.getSexo());
+        nuevoRegistro.put("pasatiempo",this.getPasatiempo());
+        db.insert("Personas",null,nuevoRegistro);
+*/
         //cerrar conexion
         db.close();
+
     }
 
-    public void eliminar(Context contexto) {
-        //Declarar variables
+    public void eliminar(Context contexto){
+        //declarar las variables
         SQLiteDatabase db;
         String sql;
 
-        //Abrir conexion base de datos en escritura
-        PersonasSQLiteOpenHelper aux = new PersonasSQLiteOpenHelper(contexto, "DBPersonas", null);
+        //Abrir la conexion de base datos en modo escritura
+        PersonasSQLiteOpenHelper  aux = new PersonasSQLiteOpenHelper(contexto,"DBPersonas",null);
         db = aux.getWritableDatabase();
 
-        //Insertar forma 1
-        sql = "DELETE FROM Personas where cedula='" + this.getCedula() + "'";
-
+        sql = "DELETE FROM Personas where cedula='"+this.getCedula()+"'";
         db.execSQL(sql);
-
         db.close();
+
     }
 
     public void modificar(Context contexto){
-        //Declarar variables
+        //declarar las variables
         SQLiteDatabase db;
         String sql;
 
-        //Abrir conexion base de datos en escritura
-        PersonasSQLiteOpenHelper aux = new PersonasSQLiteOpenHelper(contexto,"DBPersonas",null);
-        db=aux.getWritableDatabase();
+        //Abrir la conexion de base datos en modo escritura
+        PersonasSQLiteOpenHelper  aux = new PersonasSQLiteOpenHelper(contexto,"DBPersonas",null);
+        db = aux.getWritableDatabase();
 
-        //Insertar forma 1
-        sql="UPDATE Personas"+" SET nombre='"+this.getNombre()+"',"+" apellido='"+this.getApellido()+"'"+" where cedula='"+this.getCedula()+"'";
+        //insertar forma 1
+        sql = "UPDATE Personas SET nombre='"+this.getNombre()+"', apellido='"+this.getApellido()+"' where cedula ='"+this.getCedula()+"'";
 
         db.execSQL(sql);
 
+        //cerrar conexion
         db.close();
+
     }
+
+
 
 }
