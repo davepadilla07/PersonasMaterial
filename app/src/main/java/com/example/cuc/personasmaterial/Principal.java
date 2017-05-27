@@ -17,7 +17,7 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-public class Principal extends AppCompatActivity implements AdaptadorPersona.OnPersonaClickListener{
+public class Principal extends AppCompatActivity implements AdaptadorPersona.OnPersonaClickListener {
     private RecyclerView listado;
     private ArrayList<Persona> personas;
     private AdaptadorPersona adapter;
@@ -32,12 +32,12 @@ public class Principal extends AppCompatActivity implements AdaptadorPersona.OnP
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        listado=(RecyclerView)findViewById(R.id.lstOpciones);
+        listado = (RecyclerView) findViewById(R.id.lstOpciones);
 
-        personas=Datos.traerPersonas(getApplicationContext());
-        adapter=new AdaptadorPersona(personas,this);
+        personas = Datos.traerPersonas(getApplicationContext());
+        adapter = new AdaptadorPersona(personas,this);
 
-        llm=new LinearLayoutManager(this);
+        llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
 
         listado.setLayoutManager(llm);
@@ -47,13 +47,20 @@ public class Principal extends AppCompatActivity implements AdaptadorPersona.OnP
 
     public void agregar(View v){
         finish();
-        Intent i = new Intent(Principal.this,AgregarPersona.class);
+        Intent i = new Intent(Principal.this, AgregarPersona.class);
         startActivity(i);
     }
 
-
     @Override
     public void onPersonaClick(Persona p) {
+        //finish();
+        Intent i = new Intent(Principal.this,DetallePersona.class);
+        Bundle b = new Bundle();
+        b.putString("nombre",p.getNombre());
+        b.putString("apellido",p.getApellido());
+        b.putString("urlfoto",p.getUrlfoto());
 
+        i.putExtra("datos",b);
+        startActivity(i);
     }
 }
